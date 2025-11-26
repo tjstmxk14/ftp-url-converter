@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTP URL to HTML Image Tag Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            height: 150px;
+            resize: vertical;
+        }
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            margin: 0 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>FTP URL to HTML Image Tag Converter</h1>
+
+        <label for="input-area">FTP URL 입력:</label>
+        <textarea id="input-area" placeholder="여기에 FTP URL을 한 줄에 하나씩 입력하세요..."></textarea>
+
+        <div class="button-container">
+            <button id="convert-btn">변환하기</button>
+            <button id="copy-btn">복사하기</button>
+        </div>
+
+        <label for="output-area">변환된 HTML 태그:</label>
+        <textarea id="output-area" readonly></textarea>
+    </div>
+
+    <script>
+        document.getElementById('convert-btn').addEventListener('click', () => {
+            const header = '<p style="text-align: center;"><img data-clarity-loaded="12ehcza" src="http://flameworks.dothome.co.kr/top/top.gif" /></p>';
+            const footer = '<p style="text-align: center;"><img src="http://flameworks.dothome.co.kr/bottom/return.webp" data-clarity-loaded="1au8856"></p>';
+            
+            const inputText = document.getElementById('input-area').value;
+            const urls = inputText.trim().split('\n');
+            
+            const outputLines = [header];
+            const validExtensions = ['.jpg', '.png', '.gif', '.webp'];
+
+            urls.forEach(url => {
+                url = url.trim();
+                if (url && validExtensions.some(ext => url.toLowerCase().endsWith(ext))) {
+                    let baseUrl;
+                    if (url.includes('@')) {
+                        baseUrl = url.split('@')[1];
+                    } else {
+                        baseUrl = url.replace('ftp://', '');
+                    }
+                    
+                    const httpUrl = `http://${baseUrl}`;
+                    const htmlTag = `<p style="text-align: center;"><img src="${httpUrl}"></p>`;
+                    outputLines.push(htmlTag);
+                } else if (url) {
+                    outputLines.push(`<!-- 잘못된 URL 형식 또는 지원하지 않는 확장자: ${url} -->`);
+                }
+            });
+
+            outputLines.push(footer);
+
+            document.getElementById('output-area').value = outputLines.join('\n');
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const outputText = document.getElementById('output-area');
+            if (outputText.value) {
+                outputText.select();
+                navigator.clipboard.writeText(outputText.value)
+                    .then(() => {
+                        alert('클립보드에 복사되었습니다!');
+                    })
+                    .catch(err => {
+                        alert('복사에 실패했습니다.');
+                        console.error('Could not copy text: ', err);
+                    });
+            }
+        });
+    </script>
+
+</body>
+</html>
