@@ -3,91 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FTP URL to HTML Image Tag Converter</title>
+    <title>FTP URL to HTML Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-        textarea {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            height: 150px;
-            resize: vertical;
-        }
-        .button-container {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            margin: 0 10px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
+        body { font-family: 'Pretendard', sans-serif; }
+        
+        /* 스크롤바 커스텀 (화이트 테마) */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 미리보기 영역 이미지 제한 */
+        #preview-area img { max-width: 100%; height: auto; border-radius: 4px; }
     </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgMain: '#f3f4f6', /* 100 - 전체 배경 */
+                        cardBg: '#ffffff', /* 카드 배경 */
+                        cardBorder: '#e5e7eb', /* 200 - 테두리 */
+                        accent: '#3b82f6', /* 포인트 블루 */
+                        textMain: '#111827', /* 900 - 메인 텍스트 */
+                        textSub: '#6b7280', /* 500 - 서브 텍스트 */
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-bgMain text-textMain min-h-screen flex flex-col">
 
-    <div class="container">
-        <h1>FTP URL to HTML Image Tag Converter</h1>
+    <!-- Header -->
+    <header class="max-w-7xl mx-auto w-full pt-8 pb-6 px-4 md:px-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-textMain mb-2 tracking-tight"> <span class="text-accent">FTP URL</span></h1>
+    </header>
 
-        <label for="input-area">FTP URL 입력:</label>
-        <textarea id="input-area" placeholder="여기에 FTP URL을 한 줄에 하나씩 입력하세요..."></textarea>
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 p-4 md:p-8 pt-0 mb-10">
+        
+        <!-- Left Panel: Input & Controls & Output -->
+        <div class="flex flex-col gap-6">
+            
+            <!-- Input Card -->
+            <div class="bg-cardBg rounded-xl p-5 md:p-6 border border-cardBorder shadow-sm flex flex-col">
+                <div class="flex justify-between items-end mb-4 border-b border-cardBorder pb-3">
+                    <label for="input-area" class="font-bold text-textMain text-lg">1. FTP URL 입력</label>
+                    <div class="flex items-center gap-2">
+                        <label for="sort-select" class="text-sm text-textSub">정렬 기준:</label>
+                        <select id="sort-select" class="bg-white border border-cardBorder rounded text-sm text-textMain px-3 py-1.5 focus:outline-none focus:border-accent transition-colors shadow-sm cursor-pointer">
+                            <option value="none">입력순</option>
+                            <option value="asc">오름차순 (A-Z)</option>
+                            <option value="desc">내림차순 (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+                <textarea id="input-area" placeholder="여기에 FTP URL을 한 줄에 하나씩 입력하세요...&#10;예: ftp://user:pass@domain.com/image.jpg" 
+                    class="w-full flex-grow min-h-[200px] bg-white border border-cardBorder rounded-lg p-4 text-textMain focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder-gray-400 resize-y mb-4 shadow-inner"></textarea>
+                
+                <button id="convert-btn" class="w-full bg-accent hover:bg-blue-600 text-white font-bold py-3.5 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 shadow-md shadow-blue-500/30 group">
+                    <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    태그 변환 및 미리보기 생성
+                </button>
+            </div>
 
-        <div class="button-container">
-            <button id="convert-btn">변환하기</button>
-            <button id="copy-btn">복사하기</button>
+            <!-- Output Card -->
+            <div class="bg-cardBg rounded-xl p-5 md:p-6 border border-cardBorder shadow-sm flex flex-col">
+                <div class="flex justify-between items-center mb-4 border-b border-cardBorder pb-3">
+                    <label for="output-area" class="font-bold text-textMain text-lg">2. 변환된 HTML 태그</label>
+                    <button id="copy-btn" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1.5 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path></svg>
+                        복사하기
+                    </button>
+                </div>
+                <textarea id="output-area" readonly placeholder="변환된 코드가 이곳에 나타납니다."
+                    class="w-full flex-grow min-h-[150px] bg-gray-50 border border-cardBorder rounded-lg p-4 text-gray-600 focus:outline-none focus:border-accent transition-all resize-y shadow-inner"></textarea>
+            </div>
+            
         </div>
 
-        <label for="output-area">변환된 HTML 태그:</label>
-        <textarea id="output-area" readonly></textarea>
-    </div>
+        <!-- Right Panel: Preview -->
+        <div class="bg-cardBg rounded-xl p-5 md:p-6 border border-cardBorder shadow-sm flex flex-col h-[600px] lg:h-[800px]">
+            <div class="flex justify-between items-center mb-4 border-b border-cardBorder pb-3">
+                <h2 class="font-bold text-textMain text-lg flex items-center gap-2">
+                    <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                    시각적 미리보기
+                </h2>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-textSub bg-gray-100 border border-gray-200 px-2 py-1 rounded hidden md:inline-block">스크롤</span>
+                    <button id="new-window-btn" class="text-xs bg-gray-100 text-gray-400 border border-gray-200 px-3 py-1.5 rounded transition-colors flex items-center gap-1.5 cursor-not-allowed" disabled>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        새 창으로 보기
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 실제 이미지가 렌더링될 스크롤 영역 -->
+            <div id="preview-area" class="flex-grow overflow-y-auto bg-gray-50 rounded-lg border border-cardBorder p-4 flex flex-col shadow-inner">
+                <div class="text-gray-400 text-sm h-full flex items-center justify-center text-center">
+                    왼쪽 패널에서 URL을 입력하고<br>'변환하기' 버튼을 누르면 이곳에 이미지가 렌더링됩니다.
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <script>
         document.getElementById('convert-btn').addEventListener('click', () => {
-            const header = '<p style="text-align: center;"><img data-clarity-loaded="12ehcza" src="http://flameworks.dothome.co.kr/top/top.gif" /></p>';
-            const footer = '<p style="text-align: center;"><img src="http://flameworks.dothome.co.kr/bottom/return.webp" data-clarity-loaded="1au8856"></p>';
+            const header = '<p style="text-align: center; margin: 0; padding: 0;"><img data-clarity-loaded="12ehcza" src="http://flameworks.dothome.co.kr/top/top.gif" style="display: block; margin: 0 auto;" /></p>';
+            const footer = '<p style="text-align: center; margin: 0; padding: 0;"><img src="http://flameworks.dothome.co.kr/bottom/return.webp" data-clarity-loaded="1au8856" style="display: block; margin: 0 auto;"></p>';
             
             const inputText = document.getElementById('input-area').value;
-            const urls = inputText.trim().split('\n');
+            // 빈 줄 제외
+            let urls = inputText.split('\n').map(url => url.trim()).filter(url => url !== '');
+            
+            // 정렬 로직 적용
+            const sortOrder = document.getElementById('sort-select').value;
+            if (sortOrder === 'asc') {
+                urls.sort((a, b) => a.localeCompare(b));
+            } else if (sortOrder === 'desc') {
+                urls.sort((a, b) => b.localeCompare(a));
+            }
             
             const outputLines = [header];
-            const validExtensions = ['.jpg', '.png', '.gif', '.webp'];
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+            let previewHTML = header;
 
             urls.forEach(url => {
-                url = url.trim();
                 if (url && validExtensions.some(ext => url.toLowerCase().endsWith(ext))) {
                     let baseUrl;
                     if (url.includes('@')) {
@@ -97,25 +142,104 @@
                     }
                     
                     const httpUrl = `http://${baseUrl}`;
-                    const htmlTag = `<p style="text-align: center;"><img src="${httpUrl}"></p>`;
+                    const htmlTag = `<p style="text-align: center; margin: 0; padding: 0;"><img src="${httpUrl}" style="display: block; margin: 0 auto;"></p>`;
                     outputLines.push(htmlTag);
+                    previewHTML += htmlTag;
                 } else if (url) {
                     outputLines.push(`<!-- 잘못된 URL 형식 또는 지원하지 않는 확장자: ${url} -->`);
                 }
             });
 
             outputLines.push(footer);
+            previewHTML += footer;
 
+            // 결과 텍스트박스 업데이트
             document.getElementById('output-area').value = outputLines.join('\n');
+            
+            // 오른쪽 미리보기 영역 업데이트
+            const previewArea = document.getElementById('preview-area');
+            const newWindowBtn = document.getElementById('new-window-btn');
+            
+            if (urls.length > 0) {
+                previewArea.innerHTML = previewHTML;
+                
+                // 새 창 버튼 활성화
+                newWindowBtn.classList.remove('text-gray-400', 'cursor-not-allowed');
+                newWindowBtn.classList.add('text-textMain', 'hover:bg-gray-200', 'hover:text-accent', 'cursor-pointer', 'shadow-sm');
+                newWindowBtn.dataset.html = previewHTML; // HTML 저장
+                newWindowBtn.disabled = false;
+            } else {
+                previewArea.innerHTML = '<div class="text-gray-400 text-sm h-full flex items-center justify-center">입력된 유효한 URL이 없습니다.</div>';
+                
+                // 새 창 버튼 비활성화
+                newWindowBtn.classList.add('text-gray-400', 'cursor-not-allowed');
+                newWindowBtn.classList.remove('text-textMain', 'hover:bg-gray-200', 'hover:text-accent', 'cursor-pointer', 'shadow-sm');
+                newWindowBtn.dataset.html = '';
+                newWindowBtn.disabled = true;
+            }
         });
 
-        document.getElementById('copy-btn').addEventListener('click', () => {
+        // 새 창으로 보기 이벤트
+        document.getElementById('new-window-btn').addEventListener('click', function() {
+            if (this.disabled) return;
+            const htmlContent = this.dataset.html;
+            if (!htmlContent) return;
+            
+            const newWindow = window.open('', '_blank');
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ko">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>미리보기 크게 보기</title>
+                    <style>
+                        /* 여백을 완전히 제거하는 설정 */
+                        html, body { 
+                            margin: 0; 
+                            padding: 0; 
+                            background-color: #ffffff; 
+                            text-align: center; 
+                        }
+                        /* P 태그의 기본 마진 겹침 방지 */
+                        p { 
+                            margin: 0; 
+                            padding: 0; 
+                            line-height: 0; /* 이미지 간 미세한 공백 제거 */
+                        }
+                        /* 이미지가 블록처럼 딱 맞게 떨어지도록 설정 */
+                        img { 
+                            max-width: 100%; 
+                            height: auto; 
+                            display: block; 
+                            margin: 0 auto; 
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${htmlContent}
+                </body>
+                </html>
+            `);
+            newWindow.document.close();
+        });
+
+        // 복사 성공 피드백 효과
+        function showSuccessFeedback(btn) {
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> 복사 완료!`;
+            setTimeout(() => {
+                btn.innerHTML = originalContent;
+            }, 2000);
+        }
+
+        // 클립보드 복사 이벤트
+        document.getElementById('copy-btn').addEventListener('click', function() {
             const outputText = document.getElementById('output-area');
             if (outputText.value) {
                 outputText.select();
                 navigator.clipboard.writeText(outputText.value)
                     .then(() => {
-                        alert('클립보드에 복사되었습니다!');
+                        showSuccessFeedback(this);
                     })
                     .catch(err => {
                         alert('복사에 실패했습니다.');
